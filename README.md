@@ -1,3 +1,3 @@
 # own React
 
-quote: https://pomb.us/build-your-own-react/
+quoted: https://pomb.us/build-your-own-react/
