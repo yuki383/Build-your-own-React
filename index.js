@@ -58,7 +58,14 @@ function updateDom(dom, prevProps, nextProps) {
     .filter(isProperty)
     .filter(isNew(prevProps, nextProps))
     .forEach((name) => {
-      dom[name] = nextProps[name];
+      // Parse and set style
+      if (name === "style") {
+        Object.keys(nextProps[name]).forEach((key) => {
+          dom.style[key] = nextProps.style[key];
+        });
+      } else {
+        dom[name] = nextProps[name];
+      }
     });
 
   // Add event listeners
@@ -142,12 +149,6 @@ function workLoop(deadline) {
 requestIdleCallback(workLoop);
 
 function performUnitOfWork(fiber) {
-  // if (!fiber.dom) {
-  //   fiber.dom = createDom(fiber);
-  // }
-
-  // const elements = fiber.props.children;
-  // reconcileChildren(fiber, elements);
   const isFunctionComponent = fiber.type instanceof Function;
   if (isFunctionComponent) {
     updateFunctionComponent(fiber);
@@ -188,8 +189,8 @@ function useState(initial) {
     queue: [],
   };
 
-  const actions = oldHook ? oldHook.queue : []
-  actions.forEach(action => {
+  const actions = oldHook ? oldHook.queue : [];
+  actions.forEach((action) => {
     hook.state = action(hook.state);
   });
 
@@ -279,6 +280,14 @@ function Counter() {
   return <h1 onClick={() => setState((c) => c + 1)}>Count: {state}</h1>;
 }
 
+function Title() {
+  return <h1 style={{ backgroundColor: "blue" }}>It is Title</h1>;
+}
+
 const container = document.getElementById("root");
-const element = <Counter />;
+const element = (
+  <div>
+    <Title />
+  </div>
+);
 Didact.render(element, container);
