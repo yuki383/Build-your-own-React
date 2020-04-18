@@ -58,14 +58,20 @@ function updateDom(dom, prevProps, nextProps) {
     .filter(isProperty)
     .filter(isNew(prevProps, nextProps))
     .forEach((name) => {
-      // Parse and set style
-      if (name === "style") {
-        Object.keys(nextProps[name]).forEach((key) => {
-          dom.style[key] = nextProps.style[key];
+      dom[name] = nextProps[name];
+    });
+
+  // Set style properties
+  Object.keys(nextProps)
+    .filter((key) => key === "style")
+    .filter(isNew(prevProps, nextProps))
+    .forEach((name) => {
+      if (!Array.isArray(nextProps[name])) nextProps[name] = [nextProps[name]];
+      nextProps[name].forEach((style) => {
+        Object.keys(style).forEach((key) => {
+          dom.style[key] = style[key];
         });
-      } else {
-        dom[name] = nextProps[name];
-      }
+      });
     });
 
   // Add event listeners
@@ -281,7 +287,7 @@ function Counter() {
 }
 
 function Title() {
-  return <h1 style={{ backgroundColor: "blue" }}>It is Title</h1>;
+  return <h1 style={[{ backgroundColor: "yellowgreen" }]}>It is Title</h1>;
 }
 
 const container = document.getElementById("root");
